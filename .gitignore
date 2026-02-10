@@ -1,0 +1,23 @@
+# Node.js dependencies
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+
+# VS Code settings
+.vscode/
+node_modules/
+.env
+
+
+requests/users.rest
+
+# Ignorer tout le dossier requests
+/requests/
