@@ -3,24 +3,27 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production node app.js",
-    "test": "cross-env NODE_ENV=test node --test",
-    "test:only": "cross-env NODE_ENV=test node --test --test-only",
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "node --test",
+    "test:only": "node --test --test-only",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "start:test": "cross-env NODE_ENV=test node --watch app.js",
-    "dev": "cross-env NODE_ENV=development node --watch app.js",
-    "build:ui": "cd ../GaetanBoisF && npm install && npm run build && cp -r dist ../Gaetan-Bois",
-    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
+    "build:ui": "cd ../GaetanBoisF && (rm -rf node_modules 2>nul || true) && (del package-lock.json 2>nul || true) && npm install && npm run build && xcopy /E /I /Y dist ..\\Gaetan-Bois\\dist\\",
+    "deploy:full": "npm run build:ui && git add . && git commit -m 'build: frontend deployment' && git push",
     "build": "npm run build:ui"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Dupont-fr/"
+    "url": "https://github.com/Dupont-fr/Gaetan-Bois.git"
   },
   "author": "Dupont Djeague",
   "license": "ISC",
   "description": "Application de vente des meubles en bois",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "dependencies": {
     "@getbrevo/brevo": "^3.0.1",
     "bcrypt": "^6.0.0",
