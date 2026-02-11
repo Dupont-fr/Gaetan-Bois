@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const Category = require('../models/Category')
-const Image = require('../models/Image')
+const Image = require('../models/image')
 
 // ============================================
 // ROUTES PUBLIQUES - POUR LES VISITEURS

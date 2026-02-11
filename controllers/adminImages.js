@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const Image = require('../models/Image')
+const Image = require('../models/image')
 const Category = require('../models/Category')
 const { verifyAdmin } = require('../utils/adminAuth')
 
