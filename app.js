@@ -3,6 +3,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
+const path = require('path')
 
 const app = express()
 
@@ -23,6 +24,7 @@ mongoose
   .then(() => console.log('✅ MongoDB connecté'))
   .catch((err) => console.error('❌ Erreur MongoDB:', err))
 
+// Routes API
 app.use('/api/admin', require('./controllers/adminController'))
 app.use('/api/admin/categories', require('./controllers/adminCategories'))
 app.use('/api/admin/categories', require('./controllers/adminImages'))
@@ -34,26 +36,38 @@ app.use('/api/promotions', require('./controllers/publicPromotions'))
 app.use('/api/contact', require('./controllers/contactRoutes'))
 app.use('/api/admin/analytics', require('./controllers/analyticsRoutes'))
 
-app.get('/', (req, res) => {
-  res.json({
-    message: 'API Menuiserie GAETAN BOIS - Serveur actif',
-    version: '1.0.0',
-    endpoints: {
-      public: {
-        categories: '/api/categories',
-        categoryBySlug: '/api/categories/:slug',
-        promotionsActive: '/api/promotions/active',
-        tombola: '/api/promotions/tombola',
-      },
-      admin: {
-        login: '/api/admin/login',
-        categories: '/api/admin/categories',
-        images: '/api/admin/categories/:id/images',
-        promotions: '/api/admin/promotions',
-      },
-    },
+// **SERVIR LE FRONTEND EN PRODUCTION**
+if (process.env.NODE_ENV === 'production') {
+  // Servir les fichiers statiques du dossier dist
+  app.use(express.static(path.join(__dirname, 'dist')))
+
+  // Toutes les routes non-API renvoient index.html (pour React Router)
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist/index.html'))
   })
-})
+} else {
+  // Route de test en développement
+  app.get('/', (req, res) => {
+    res.json({
+      message: 'API Menuiserie GAETAN BOIS - Serveur actif',
+      version: '1.0.0',
+      endpoints: {
+        public: {
+          categories: '/api/categories',
+          categoryBySlug: '/api/categories/:slug',
+          promotionsActive: '/api/promotions/active',
+          tombola: '/api/promotions/tombola',
+        },
+        admin: {
+          login: '/api/admin/login',
+          categories: '/api/admin/categories',
+          images: '/api/admin/categories/:id/images',
+          promotions: '/api/admin/promotions',
+        },
+      },
+    })
+  })
+}
 
 app.use((req, res) => {
   res.status(404).json({
@@ -77,7 +91,9 @@ const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
   console.log(`🚀 Serveur démarré sur le port ${PORT}`)
   console.log(`📡 Environnement: ${process.env.NODE_ENV || 'development'}`)
-  console.log(
-    `🌐 Frontend: ${process.env.FRONTEND_URL || 'http://localhost:5174'}`,
-  )
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(
+      `🌐 Frontend: ${process.env.FRONTEND_URL || 'http://localhost:5174'}`,
+    )
+  }
 })
