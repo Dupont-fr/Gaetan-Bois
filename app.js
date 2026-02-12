@@ -40,11 +40,6 @@ app.use('/api/admin/analytics', require('./controllers/analyticsRoutes'))
 if (process.env.NODE_ENV === 'production') {
   // Servir les fichiers statiques du dossier dist
   app.use(express.static(path.join(__dirname, 'dist')))
-
-  // Toutes les routes non-API renvoient index.html (pour React Router)
-  app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist/index.html'))
-  })
 } else {
   // Route de test en développement
   app.get('/', (req, res) => {
@@ -69,14 +64,16 @@ if (process.env.NODE_ENV === 'production') {
   })
 }
 
-app.use((req, res) => {
+// Middleware 404 pour routes API
+app.use('/api', (req, res) => {
   res.status(404).json({
     success: false,
-    message: 'Route introuvable',
+    message: 'Route API introuvable',
     path: req.path,
   })
 })
 
+// Middleware d'erreur
 app.use((err, req, res, next) => {
   console.error('Erreur serveur:', err)
   res.status(500).json({
@@ -85,6 +82,13 @@ app.use((err, req, res, next) => {
     error: process.env.NODE_ENV === 'development' ? err.message : undefined,
   })
 })
+
+// Toutes les autres routes renvoient index.html (DOIT ÊTRE EN DERNIER)
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res) => {
+    res.sendFile(path.join(__dirname, 'dist/index.html'))
+  })
+}
 
 const PORT = process.env.PORT || 3000
 
