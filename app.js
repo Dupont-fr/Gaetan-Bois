@@ -11,7 +11,10 @@ app.use(cookieParser())
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5174',
+    origin:
+      process.env.NODE_ENV === 'production'
+        ? 'https://gaetan-bois.onrender.com' // Production
+        : 'http://localhost:5174', // Dev
     credentials: true,
   }),
 )
